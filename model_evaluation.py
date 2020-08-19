@@ -90,7 +90,7 @@ def get_metrics_for_algorithm(model_name, true_labels, predictions):
       "AUC":AUC
       })
 
-def metricsClassification(df):
+def metrics_classification(df):
   true_labels = df['True value']
   predictions = df.drop('True value', axis=1)
 
