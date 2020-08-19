@@ -1,48 +1,33 @@
-from sklearn import linear_model
 import sklearn
 from sklearn.metrics import confusion_matrix
 import progressbar
-from sklearn.model_selection import ShuffleSplit
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler
-from sklearn.datasets import make_moons, make_circles, make_classification
-from sklearn.neural_network import MLPClassifier
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.svm import SVC
-from sklearn.gaussian_process import GaussianProcessClassifier
-from sklearn.gaussian_process.kernels import RBF
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
-from sklearn.naive_bayes import GaussianNB
-from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
+
 import numpy as np
 import pandas as pd
 import seaborn as sns
 from wordcloud import WordCloud, STOPWORDS, ImageColorGenerator
 
 import matplotlib.pyplot as plt
-from sklearn.naive_bayes import GaussianNB
-from sklearn.svm import SVC
-from sklearn.datasets import load_digits
 from sklearn.model_selection import learning_curve
 from sklearn.model_selection import ShuffleSplit
 
 import matplotlib.pyplot as plt
 from matplotlib.pyplot import figure
 
-print("Tarjoaa funktiot:")
 
-
-
-# Functio, jolla voi testata erilaisten classifier:n toimintaa
-# parametreiksi annettaan train ja test -data sekä lista testattavia funktiota (niiden nimi ja funktiokutsu)
-# ulos tulee dataframe, jossa sarakkeissa erilaisia tunnuslukuja ko. functiosta kyseisellä datalla
 def test_different_models(X_train, X_test, y_train, y_test, modelsToTest, average_type='binary', show_learning_curve=False, random_state = 42):
+  """
+  Function for testing different models.
+
+  Train and test data and a list of models (with their name and function call) should be given as parameters.
+
+  Outputs a dataframe with various measures on performance of the model with the given data as columns.
+
+  """
+  
   predictionTable = pd.DataFrame()
   predictionTable["True value"] = y_test.reshape(-1)
-  # scoreDf = pd.DataFrame(columns=["Model", "Accuracy"])
-  # scoreDf.set_index("Model")
-
+  
   with progressbar.ProgressBar(max_value=len(modelsToTest)) as bar:
     i=0
     for m in modelsToTest:
@@ -66,11 +51,13 @@ def test_different_models(X_train, X_test, y_train, y_test, modelsToTest, averag
       bar.update(i)
       i=i+1
   return predictionTable
-print("- testDifferentClassifiers(X_train, X_test, y_train, y_test, modelsToTest, average_type='binary')")
-
-
 
 def get_metrics_for_algorithm(model_name, true_labels, predictions):
+  """
+  Helper function for obtaining metrics for classification.
+
+  """
+
   accuracy = sklearn.metrics.accuracy_score(true_labels, predictions)
   precision = sklearn.metrics.precision_score(true_labels, predictions)
   recall = sklearn.metrics.recall_score(true_labels, predictions)
@@ -91,6 +78,10 @@ def get_metrics_for_algorithm(model_name, true_labels, predictions):
       })
 
 def metrics_classification(df):
+  """
+  Function for obtaining metrics for classification of a dataframe containing true values and predictions for different models.
+
+  """
   true_labels = df['True value']
   predictions = df.drop('True value', axis=1)
 
@@ -101,7 +92,12 @@ def metrics_classification(df):
   return scoreDf
 
 
-def add_or_replace_to_datafrema(name, dataframe, series):
+def add_or_replace_to_dataframe(name, dataframe, series):
+  """
+  A convenience function for adding or replacing new model scores to a dataframe.
+
+  """
+
   if(name in dataframe["Model"].values or name in dataframe.index):
     # print("replace")
     # replace
@@ -116,7 +112,7 @@ def add_or_replace_to_datafrema(name, dataframe, series):
 
 def metrics_regression(df):
   """
-  For obtaining metrics for regression problem.
+  For obtaining metrics for regression problems.
 
   """
 
@@ -139,9 +135,12 @@ def metrics_regression(df):
 
 
 # ottaa syötteeksi Pandas dataframen, ja piirtää siitä kuvaajia
-def createGraphsFromScores(scores, modelsToTest):
-  # plt.rcParams['axes.grid'] = True
-  # plt.rcParams['axes.grid.axis'] = "y"
+def create_graphs_from_scores(scores, modelsToTest):
+  """
+  A function for creating a summary graph of different measures for a classification algorithm.
+
+  """
+
   _, axs = plt.subplots(1, 4, sharey='row', gridspec_kw={'hspace': 0, 'wspace': 0}, figsize=(10,len(modelsToTest)*0.8)) #sharex='col',
   (ax1, ax2, ax3, ax4) = axs
 
@@ -165,15 +164,25 @@ def createGraphsFromScores(scores, modelsToTest):
 
 
 def print_scoretable(scores, columns=["Accuracy", "AUC", "MCC", "Precision", "Recall"]):
+  """
+  A convenience function styling a dataframe such that text contains bars in the background."
+
+  """
+
+
   return scores.style.set_precision(2).bar(
       subset=columns, color='#ddd'
       ).hide_index().set_properties(**{'width':'8em', 'text-align':'center'})
-print("- print_scoretable(scores, columns=['Accuracy', 'AUC', 'MCC', 'Precision', 'Recall'])  tulostaa DataFramen tyyliteltynä niin, että tekstin taustalla on palkit ")
 
-# Apufunktioita
+# Helper functions
 
 
 def draw_confusion_matrix_for_good_poor(truevalues, predictions, normalize=True, title=""):
+  """
+  Function for drawing a confusion matrix.
+
+  """
+
   res = pd.DataFrame()
   res['y_true'] = np.where(truevalues, "good", "poor")
   res['y_pred'] = np.where(predictions, "good", "poor")
@@ -196,9 +205,6 @@ def draw_confusion_matrix_for_good_poor(truevalues, predictions, normalize=True,
   plt.ylabel('true values')
   plt.xlabel('predictions')
   plt.show()
-print("- draw_confusion_matrix_for_good_poor(truevalues, predictions, normalize=True, title="")  piirtää confusionmatrixin oletuksella, että 1/true = good, 0/false = poor")
-
-
 
 def color_func_green(word, font_size, position, orientation,random_state=None, hue=100,  **kwargs):
     return("hsl({},50%, {}%)".format(np.random.randint(hue-5,hue+5), np.random.randint(20,51)))
@@ -210,6 +216,13 @@ def color_func_blue(word, font_size, position, orientation,random_state=None, hu
     return("hsl({},50%, {}%)".format(np.random.randint(hue-5,hue+5), np.random.randint(20,51)))
 
 def draw_word_cloud(words, title, numberofWords = 100, color="blue", titlefontsize=12):
+  """
+  Function for drawing a wordcloud.
+
+  Colour choices are red, green and blue.
+
+  """
+
   wordCounts = words.sum(axis = 0, skipna = True)
   topFrequentWords = wordCounts.sort_values(ascending=False)[:numberofWords]
   wc = WordCloud(background_color='white') #, colormap="Blues"
@@ -225,23 +238,20 @@ def draw_word_cloud(words, title, numberofWords = 100, color="blue", titlefontsi
   plt.axis("off")
   plt.title(title, fontsize=titlefontsize)
   plt.show()
-print("- drawWordCloud(words, title, numberofWords = 100, color='blue', titlefontsize=12)   värivaihtoehdot red, green, blue")
-
 
 def draw_roc_curve(fpr, tpr):
-    plt.plot(fpr, tpr, color='orange', label='ROC')
-    plt.plot([0, 1], [0, 1], color='darkblue', linestyle='--')
-    plt.xlabel('False Positive Rate')
-    plt.ylabel('True Positive Rate')
-    plt.title('Receiver Operating Characteristic (ROC) Curve')
-    plt.legend()
-    plt.show()
-print("- draw_roc_curve(fpr, tpr)  piirtää ROC-kuvaajan perustuen sklearn.metrics.roc_curve -funktion tuloksiin")
+  """
+  Draws a ROC-curve based on sklearn.metrics.roc_curve.
 
+  """
 
-
-
-
+  plt.plot(fpr, tpr, color='orange', label='ROC')
+  plt.plot([0, 1], [0, 1], color='darkblue', linestyle='--')
+  plt.xlabel('False Positive Rate')
+  plt.ylabel('True Positive Rate')
+  plt.title('Receiver Operating Characteristic (ROC) Curve')
+  plt.legend()
+  plt.show()
 
 def plot_learning_curve(estimator, title, X, y, ylim=None, cv=None, n_jobs=None, train_sizes=np.linspace(.1, 1.0, 5)):
     """
@@ -323,6 +333,3 @@ def plot_learning_curve(estimator, title, X, y, ylim=None, cv=None, n_jobs=None,
 
     plt.legend(loc="best")
     return plt
-print("- plot_learning_curve(estimator, title, X, y, ylim=None, cv=None, n_jobs=None, train_sizes=np.linspace(.1, 1.0, 5))")
-
-
