@@ -20,6 +20,16 @@ import pandas as pd
 import seaborn as sns
 from wordcloud import WordCloud, STOPWORDS, ImageColorGenerator
 
+import matplotlib.pyplot as plt
+from sklearn.naive_bayes import GaussianNB
+from sklearn.svm import SVC
+from sklearn.datasets import load_digits
+from sklearn.model_selection import learning_curve
+from sklearn.model_selection import ShuffleSplit
+
+import matplotlib.pyplot as plt
+from matplotlib.pyplot import figure
+
 print("Tarjoaa funktiot:")
 
 
@@ -27,7 +37,7 @@ print("Tarjoaa funktiot:")
 # Functio, jolla voi testata erilaisten classifier:n toimintaa
 # parametreiksi annettaan train ja test -data sekä lista testattavia funktiota (niiden nimi ja funktiokutsu)
 # ulos tulee dataframe, jossa sarakkeissa erilaisia tunnuslukuja ko. functiosta kyseisellä datalla
-def testDifferentClassifiers(X_train, X_test, y_train, y_test, modelsToTest, average_type='binary', show_learning_curve=False, random_state = 42):
+def test_different_models(X_train, X_test, y_train, y_test, modelsToTest, average_type='binary', show_learning_curve=False, random_state = 42):
   predictionTable = pd.DataFrame()
   predictionTable["True value"] = y_test.reshape(-1)
   # scoreDf = pd.DataFrame(columns=["Model", "Accuracy"])
@@ -37,10 +47,10 @@ def testDifferentClassifiers(X_train, X_test, y_train, y_test, modelsToTest, ave
     i=0
     for m in modelsToTest:
       #print(m[0])
-      clf=m[1]
-      clf.fit(X_train, y_train)
+      model=m[1]
+      model.fit(X_train, y_train)
       
-      predictions = clf.predict(X_test)
+      predictions = model.predict(X_test)
       if len(m) > 2:
         predictions = predictions > m[2]
       predictionTable[m[0]] = predictions
@@ -105,6 +115,11 @@ def add_or_replace_to_datafrema(name, dataframe, series):
 
 
 def metrics_regression(df):
+  """
+  For obtaining metrics for regression problem.
+
+  """
+
   y_true = df['True value']
   predictions = df.drop('True value', axis=1)
 
@@ -122,13 +137,12 @@ def metrics_regression(df):
 
 
 
-import matplotlib.pyplot as plt
-from matplotlib.pyplot import figure
+
 # ottaa syötteeksi Pandas dataframen, ja piirtää siitä kuvaajia
 def createGraphsFromScores(scores, modelsToTest):
   # plt.rcParams['axes.grid'] = True
   # plt.rcParams['axes.grid.axis'] = "y"
-  fig, axs = plt.subplots(1, 4, sharey='row', gridspec_kw={'hspace': 0, 'wspace': 0}, figsize=(10,len(modelsToTest)*0.8)) #sharex='col',
+  _, axs = plt.subplots(1, 4, sharey='row', gridspec_kw={'hspace': 0, 'wspace': 0}, figsize=(10,len(modelsToTest)*0.8)) #sharex='col',
   (ax1, ax2, ax3, ax4) = axs
 
   scores.plot.barh(x='Model', y='Accuracy', legend=False, ax=ax1)
@@ -195,7 +209,7 @@ def color_func_red(word, font_size, position, orientation,random_state=None, hue
 def color_func_blue(word, font_size, position, orientation,random_state=None, hue=230,  **kwargs):
     return("hsl({},50%, {}%)".format(np.random.randint(hue-5,hue+5), np.random.randint(20,51)))
 
-def drawWordCloud(words, title, numberofWords = 100, color="blue", titlefontsize=12):
+def draw_word_cloud(words, title, numberofWords = 100, color="blue", titlefontsize=12):
   wordCounts = words.sum(axis = 0, skipna = True)
   topFrequentWords = wordCounts.sort_values(ascending=False)[:numberofWords]
   wc = WordCloud(background_color='white') #, colormap="Blues"
@@ -226,13 +240,7 @@ print("- draw_roc_curve(fpr, tpr)  piirtää ROC-kuvaajan perustuen sklearn.metr
 
 
 
-import numpy as np
-import matplotlib.pyplot as plt
-from sklearn.naive_bayes import GaussianNB
-from sklearn.svm import SVC
-from sklearn.datasets import load_digits
-from sklearn.model_selection import learning_curve
-from sklearn.model_selection import ShuffleSplit
+
 
 
 def plot_learning_curve(estimator, title, X, y, ylim=None, cv=None, n_jobs=None, train_sizes=np.linspace(.1, 1.0, 5)):
