@@ -5,7 +5,7 @@ import progressbar
 import numpy as np
 import pandas as pd
 import seaborn as sns
-from wordcloud import WordCloud, STOPWORDS, ImageColorGenerator
+from wordcloud import WordCloud
 
 import matplotlib.pyplot as plt
 from sklearn.model_selection import learning_curve
