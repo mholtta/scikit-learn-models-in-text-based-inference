@@ -28,6 +28,12 @@ This is the course project for CS-C3160 Data Science. The project was done in pa
 ### Data utilized in project:
 The dataset consisted of Yelp-reviews, both the files random_reviews.csv and bow1000.csv were given. Please see five first lines of the dataframes below.
 
+**random_reviews.csv**
+![random_reviews.csv](https://raw.githubusercontent.com/mholtta/scikit-learn-models-in-text-based-inference/master/Visualizations/reviews.png?token=AOTNNCF4CJGWUEKH5HQ2N3K7HZJQ2)
+
+**bow1000.csv**
+![bow1000.csv](https://raw.githubusercontent.com/mholtta/scikit-learn-models-in-text-based-inference/master/Visualizations/bow.png?token=AOTNNCEUARPRZFIDVVUTAHK7HZJTM)
+
 ### Some results:
 In classification it turned out that the simple Logistic Regression was on par with more advanced methods such as Random Forest or Multilayer Perceptron. On the other hand, in predicting usefulness of the review linear regression was confused from the highly collinear data with more attributes than reviews. 
 
@@ -36,10 +42,14 @@ Additionally, we noted that obtaining additional data would have benefitted at l
 
 **Summary of results from classification**
 
+![Results from classification](https://raw.githubusercontent.com/mholtta/scikit-learn-models-in-text-based-inference/master/Visualizations/classification_results.png?token=AOTNNCB6PCNGYXVH3QPC3NC7HZJCS)
 
 **Summary of results from predicting usefulness of review**
-
+![Results from predicting usefulness of review](https://raw.githubusercontent.com/mholtta/scikit-learn-models-in-text-based-inference/master/Visualizations/regression_results.png?token=AOTNNCGMM7ELZHVFKGYRKRK7HZJD2)
 
 **Learning curve for Random Forest in classification**
 
+![Learning curve](https://raw.githubusercontent.com/mholtta/scikit-learn-models-in-text-based-inference/master/Visualizations/learning-curve.png?token=AOTNNCDUFILKHH7UOE7DIZK7HZJF4)
+
 **Tree max depth vs generalization error for Decision Trees and AdaBoost based on trees**
+![Train vs test error](https://raw.githubusercontent.com/mholtta/scikit-learn-models-in-text-based-inference/master/Visualizations/train-test_error.png?token=AOTNNCBSFGCT55CS5GIZ7BK7HZJHW)
